@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+    <title>Socket.IO chat</title>
+
+</head>
+<body>
+<ul id="messages"></ul>
+<form action="">
+    <input id="m" autocomplete="off" /><button>Send</button>
+</form>
+<button id="sub" type="button">Sub top1</button>
+<button id="unsub" type="button">unSub top1</button>
+<button id="sub2" type="button">Sub top2</button>
+<button id="unsub2" type="button">unSub top2</button>
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    var socket = io();
+    $('form').submit(function(){
+        socket.emit('publish', 'top1', $('#m').val(), 1, false);
+        socket.emit('publish', 'top2', $('#m').val(), 1, false);
+        $('#m').val('');
+        return false;
+    });
+    socket.on('mqtt', function(msg){
+        $('#messages').append($('<li>').text(msg.topic+' '+msg.msg));
+    });
+    $('#sub').click(function () {
+        socket.emit('subscribe', 'top1', 1);
+    });
+    $('#unsub').click(function () {
+        socket.emit('unsubscribe', 'top1');
+    });
+    $('#sub2').click(function () {
+        socket.emit('subscribe', 'top2', 1);
+    });
+    $('#unsub2').click(function () {
+        socket.emit('unsubscribe', 'top2');
+    });
+</script>
+</body>
+</html>
